@@ -53,9 +53,16 @@ const ChartModal = () => {
     setFormData({ ...formData, [name]: value });
   };
   const handleSave = async () => {
+    // 입력 검증
+    if (!formData.stockCode || !formData.startDate || !formData.endDate) {
+      setError("종목 코드와 날짜는 필수 입력 항목입니다.");
+      return;
+    }
+
     try {
       const data = await fetchGetStockData(formData);
       setChartData(data);
+      setShow(false);
     } catch (error) {
       console.error("Failed to fetch stock data", error);
     } finally {
@@ -71,7 +78,7 @@ const ChartModal = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="formMarketCode">
+            {/* <Form.Group controlId="formMarketCode">
               <Form.Label>시장 분류 코드</Form.Label>
               <Form.Control
                 type="text"
@@ -81,15 +88,16 @@ const ChartModal = () => {
                 // onChange={handleChange}
                 disabled
               />
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group controlId="formStockCode">
               <Form.Label>종목 코드</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="종목번호 (6자리) ETN의 경우, Q로 시작 (EX. Q500001)"
+                placeholder="종목번호 (6자리)"
                 name="stockCode"
                 value={formData.stockCode}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             <Form.Group controlId="formStartDate">
@@ -100,6 +108,7 @@ const ChartModal = () => {
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             <Form.Group controlId="formEndDate">
@@ -110,19 +119,23 @@ const ChartModal = () => {
                 name="endDate"
                 value={formData.endDate}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             <Form.Group controlId="formPeriod">
               <Form.Label>기간 분류 코드</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="D:일봉, W:주봉, M:월봉, Y:년봉"
+              <Form.Select
                 name="period"
                 value={formData.period}
                 onChange={handleChange}
-              />
+              >
+                <option value="D">일봉</option>
+                <option value="W">주봉</option>
+                <option value="M">월봉</option>
+                <option value="Y">년봉</option>
+              </Form.Select>
             </Form.Group>
-            <Form.Group controlId="formPcr">
+            {/* <Form.Group controlId="formPcr">
               <Form.Label>수정주가 원주가 가격 여부</Form.Label>
               <Form.Control
                 type="text"
@@ -132,7 +145,7 @@ const ChartModal = () => {
                 // onChange={handleChange}
                 disabled
               />
-            </Form.Group>
+            </Form.Group> */}
           </Form>
         </Modal.Body>
         <Modal.Footer>
